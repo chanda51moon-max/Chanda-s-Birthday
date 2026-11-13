@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday My Love, Ayesha! ❤️</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet OpenStreetMap CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50: '#FCF8F9',
+                            100: '#FAF2F4',
+                            200: '#F5E6E8',
+                            300: '#EBD2D6',
+                        },
+                        pink: {
+                            100: '#FFEBEF',
+                            200: '#FFD6DF',
+                            300: '#FFB3C3',
+                            400: '#FF809B',
+                            500: '#FF4D73',
+                            600: '#E62E5C',
+                        },
+                        maroon: {
+                            50: '#FBF2F4',
+                            100: '#F7E3E7',
+                            500: '#A82C48',
+                            700: '#702236',
+                            800: '#5A1425',
+                            900: '#2C121A',
+                        },
+                        gold: {
+                            400: '#F3C649',
+                            500: '#D4A017',
+                        }
+                    },
+                    fontFamily: {
+                        script: ['"Great Vibes"', 'cursive'],
+                        handwriting: ['Caveat', 'cursive'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #752438;
+            color: #2C121A;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .paper-texture {
+            background-color: #FAF2F4;
+            background-image: radial-gradient(#A82C48 0.3px, transparent 0.3px), radial-gradient(#A82C48 0.3px, #FAF2F4 0.3px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .tape-effect {
+            position: relative;
+        }
+        .tape-effect::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1deg);
+            width: 80px;
+            height: 22px;
+            background: rgba(255, 235, 239, 0.85);
+            border: 1px dashed rgba(168, 44, 72, 0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            z-index: 20;
+            backdrop-filter: blur(1px);
+        }
+
+        /* 3D Envelope Animations */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .envelope-flap {
+            transform-origin: top center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 30;
+        }
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+        .letter-paper {
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+            pointer-events: none;
+        }
+        .envelope-wrapper.open .letter-paper {
+            transform: translateY(-220px);
+            z-index: 40;
+            pointer-events: auto;
+        }
+        @media (max-width: 640px) {
+            #musicToggleBtn {
+                display: none;
+            }
+            #letterSection > .bg-cream-50 {
+                overflow: visible;
+            }
+            .envelope-wrapper.open .letter-paper {
+                position: relative;
+                inset: auto;
+                margin: 1rem 1rem 0;
+                max-height: none;
+                overflow: visible;
+                transform: none;
+            }
+            #letterPaper .letter-signoff {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            #letterPaper .letter-signoff > button {
+                flex: 0 0 auto;
+            }
+            #letterPaper .letter-signature {
+                margin-left: auto;
+                max-width: 8rem;
+                font-size: 1.25rem;
+                line-height: 1.1;
+                text-align: right;
+            }
+        }
+
+        /* Liquid Love Meter Vessel */
+        .love-meter-container {
+            width: 110px;
+            height: 190px;
+            border: 3.5px solid #702236;
+            border-radius: 55px 55px 20px 20px;
+            position: relative;
+            overflow: hidden;
+            background: #FCF8F9;
+        }
+        .love-meter-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, #702236, #FF4D73);
+            transition: height 0.1s linear;
+        }
+        .love-game-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1rem;
+            align-items: stretch;
+        }
+        .love-meter-panel {
+            height: 580px;
+        }
+        .game-panel {
+            min-width: 0;
+            height: 580px;
+            display: flex;
+            flex-direction: column;
+            padding: 0.75rem;
+            border: 1px solid rgba(112, 34, 54, 0.2);
+            border-radius: 0.75rem;
+            background: #FAF2F4;
+            box-shadow: 0 10px 24px rgba(44, 18, 26, 0.12);
+            text-align: center;
+        }
+        .game-panel-heading {
+            flex: 0 0 auto;
+            margin: 0 0 0.5rem;
+            text-align: left;
+        }
+        .game-frame {
+            display: block;
+            flex: 1 1 auto;
+            width: 100%;
+            height: 0;
+            min-height: 0;
+            border: 0;
+            border-radius: 0.5rem;
+            background: #fff7fa;
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+            50% { transform: scale(1.15) rotate(1deg); opacity: 1; filter: drop-shadow(0 0 10px #F3C649); }
+        }
+        .flame-anim {
+            animation: flicker 0.6s infinite alternate ease-in-out;
+            transform-origin: center bottom;
+        }
+        #cakeCanvas {
+            touch-action: none;
+            cursor: crosshair;
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        #cakeSideContainer .cake-side-stage {
+            width: min(16rem, 100%);
+            height: auto;
+            aspect-ratio: 1;
+        }
+        #cakeSideContainer .cake-side-top-tier {
+            width: 62.5%;
+        }
+        #cakeSideContainer .cake-side-bottom-tier {
+            width: 87.5%;
+        }
+        #cakeSideContainer .cake-side-plate {
+            width: 100%;
+        }
+        #cakeTopContainer .cake-canvas-frame {
+            width: min(288px, 100%);
+        }
+
+        /* Heart Canvas Overlay */
+        #heartCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Leaflet custom map markers */
+        .custom-heart-pin {
+            background-color: #702236;
+            border: 2px solid #FAF2F4;
+            color: #FAF2F4;
+            border-radius: 50%;
+            width: 32px !important;
+            height: 32px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            font-size: 14px;
+        }
+
+        .journey-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+            gap: 1rem;
+            align-items: stretch;
+        }
+        .journey-map-frame,
+        .journey-location-grid {
+            height: 520px;
+        }
+        .journey-location-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-rows: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .journey-location-card {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            /* grid-template-rows: auto 1fr; */
+            align-content: center;
+            gap: 0.4rem 0.65rem;
+            min-width: 0;
+            padding: 0.85rem;
+            border: 1px solid rgba(112, 34, 54, 0.18);
+            border-radius: 0.75rem;
+            background: rgba(245, 230, 232, 0.65);
+            color: #2C121A;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        }
+        .journey-location-card:hover,
+        .journey-location-card:focus-visible {
+            border-color: #A82C48;
+            box-shadow: 0 6px 16px rgba(112, 34, 54, 0.12);
+            outline: none;
+        }
+        .journey-location-card[aria-pressed="true"] {
+            border-color: #702236;
+            background: #F7E3E7;
+        }
+        .journey-location-card:last-child {
+            grid-column: 1 / -1;
+        }
+        .journey-location-icon {
+            grid-row: 1 / span 2;
+            align-self: center;
+            font-size: 1.5rem;
+        }
+        .journey-location-title {
+            align-self: end;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .journey-location-description {
+            align-self: start;
+            color: rgba(44, 18, 26, 0.76);
+            font-size: 0.7rem;
+            line-height: 1.4;
+        }
+        .calendar-note-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+            align-items: stretch;
+            gap: 1rem;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .calendar-note-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 100%;
+            padding: 1.25rem;
+        }
+        .calendar-note-date {
+            color: #E62E5C;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+        .calendar-note-description {
+            color: #2C121A;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        @media (max-width: 900px) {
+            .journey-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .journey-map-frame {
+                height: clamp(280px, 45vh, 360px);
+            }
+            .journey-location-grid {
+                height: auto;
+                grid-template-rows: repeat(4, minmax(84px, auto));
+            }
+            .journey-location-card[aria-pressed="true"] {
+                order: -1;
+            }
+        }
+        @media (max-width: 420px) {
+            .journey-location-grid {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: repeat(7, minmax(76px, auto));
+            }
+            .journey-location-card:last-child {
+                grid-column: auto;
+            }
+        }
+        @media (max-width: 640px) {
+            .calendar-note-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .calendar-note-panel {
+                min-height: 90px;
+            }
+        }
+
+        /* Emoticon Button Glow active state */
+        .emo-btn.active {
+            background: linear-gradient(135deg, #702236, #A82C48);
+            color: #FAF2F4;
+            box-shadow: 0 8px 20px rgba(112, 34, 54, 0.35);
+            transform: translateY(-3px) scale(1.08);
+        }
+
+        @keyframes giftShake {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-8deg) scale(1.05); }
+            40% { transform: rotate(8deg) scale(1.05); }
+            60% { transform: rotate(-6deg) scale(1.05); }
+            80% { transform: rotate(6deg) scale(1.05); }
+        }
+        .animate-gift-shake {
+            animation: giftShake 0.8s ease-in-out infinite;
+        }
+
+        @keyframes floatingPetal {
+            0% { transform: translate(0, 0) rotate(0deg) scale(0.8); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: translate(var(--petal-x), var(--petal-y)) rotate(var(--petal-rotation)) scale(1); opacity: 0; }
+        }
+        .floating-petal {
+            position: fixed;
+            width: 12px;
+            height: 18px;
+            border-radius: 100% 0 100% 0;
+            pointer-events: none;
+            z-index: 30;
+            animation: floatingPetal 1.8s ease-out forwards;
+        }
+        @keyframes birthdayHeartReveal {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.25); }
+            18% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+            34% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            78% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+        }
+        .birthday-heart-reveal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 100;
+            color: #E62E5C;
+            font-family: Arial, sans-serif;
+            font-size: clamp(10rem, 48vw, 22rem);
+            line-height: 1;
+            filter: drop-shadow(0 10px 24px rgba(112, 34, 54, 0.35));
+            pointer-events: none;
+            animation: birthdayHeartReveal 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .birthday-heart-reveal {
+                animation-duration: 0.8s;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FAF2F4; }
+        ::-webkit-scrollbar-thumb { background: #A82C48; border-radius: 4px; }
+    </style>
+</head>
+<body class="paper-texture min-h-screen relative flex flex-col justify-between selection:bg-pink-200 selection:text-maroon-900">
+
+    <canvas id="heartCanvas"></canvas>
+    <audio id="birthdayMusic" src="./sub_clair-happy-birthday-578363.mp3" preload="auto" autoplay loop></audio>
+
+    <div class="relative z-10">
+        
+        <!-- Floating Audio Control Pill (Image 1 Style) -->
+        <div class="fixed top-4 right-4 z-50">
+            <button id="musicToggleBtn" type="button" onclick="toggleAudio()" aria-label="Play or pause birthday music" title="Play or pause birthday music" class="flex items-center gap-3 bg-cream-50/95 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-pink-200 hover:shadow-xl transition-all duration-300">
+                <div id="musicIconCircle" class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-cream-50 text-sm shadow-md transition-transform duration-500">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div class="flex flex-col text-left">
+                    <span id="musicStatusText" class="text-xs font-semibold text-maroon-900 tracking-wide">Play Melody</span>
+                    <span class="text-[10px] text-pink-600 font-bold">Click to play / pause</span>
+                </div>
+            </button>
+        </div>
+
+        <main class="max-w-5xl mx-auto px-4 pt-8 pb-2 md:pt-14 md:pb-3 text-center">
+            
+            <div class="flex flex-col items-center">
+                <!-- Top Romantic Title -->
+                <h1 class="font-script text-5xl md:text-7xl lg:text-6xl text-maroon-700 mb-6 drop-shadow-sm flex items-center justify-center gap-3">
+                    Happy Birthday, Chanda <span class="text-pink-500 inline-block animate-pulse">🎁</span>
+                </h1>
+
+                <!-- Cute Illustration Card (Screenshot 1) -->
+                <div class="bg-cream-50 border border-maroon-700/15 rounded-2xl p-6 md:p-8 shadow-xl max-w-md w-full relative transform hover:scale-[1.01] transition duration-300">
+                    <div class="w-full h-64 bg-black rounded-xl border border-pink-200 flex items-center justify-center relative overflow-hidden mb-5">
+                        <img src="./Chanda.jpeg" alt="Birthday girl with cake illustration" class="w-full h-full object-contain drop-shadow-md" />
+
+                        <!-- Hearts and Flowers Overlay -->
+                        <span class="absolute top-4 left-6 text-xl">🌸</span>
+                        <span class="absolute top-4 right-6 text-xl">⭐</span>
+                        <span class="absolute bottom-4 left-6 text-xl">✨</span>
+                        <span class="absolute bottom-4 right-6 text-xl">🌸</span>
+                    </div>
+
+                    <p class="font-sans text-xs md:text-sm text-maroon-800/80 leading-relaxed font-medium px-2">
+                        Some people are special, not because they are perfect, but because their presence makes the world a little more beautiful.
+
+Today is the birthday of one such beautiful soul.🤍✨
+                    </p>
+
+                </div>
+
+                <!-- Hero Name Badge -->
+                <div class="mt-8">
+  
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 2. Small Compact Calendar Section (Image 2 Style) -->
+        <section class="max-w-4xl mx-auto px-4 pt-2 pb-8 md:pt-3">
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-6 md:p-8 shadow-xl">
+                <div class="text-center max-w-2xl mx-auto mb-6">
+                    <h2 class="font-serif text-2xl md:text-3xl font-bold text-maroon-900 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-pink-500 text-xl"></i> November Where Miracles Happen
+                    </h2>
+                </div>
+
+                <div class="calendar-note-layout">
+                <div class="calendar-card bg-cream-50 rounded-2xl p-5 shadow-md border border-pink-200">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-pink-200">
+                        <h3 class="font-script text-3xl text-pink-600">November</h3>
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-pink-100 text-maroon-700 rounded-full border border-pink-200">2026</span>
+                    </div>
+                    <div class="grid grid-cols-7 text-center text-[10px] font-bold text-maroon-700/50 mb-2">
+                        <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs">
+                        <button onclick="showCalendarNote(1)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">1</button>
+                        <button onclick="showCalendarNote(2)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">2</button>
+                        <button onclick="showCalendarNote(3)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">3</button>
+                        <button onclick="showCalendarNote(4)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">4</button>
+                        <button onclick="showCalendarNote(5)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">5</button>
+                        <button onclick="showCalendarNote(6)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">6</button>
+                        <button onclick="showCalendarNote(7)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">7</button>
+                        <button onclick="showCalendarNote(8)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">8</button>
+                        <button onclick="showCalendarNote(9)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">9</button>
+                        <button onclick="showCalendarNote(10)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">10</button>
+                        <button onclick="showCalendarNote(11)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">11</button>
+                        <button onclick="showCalendarNote(12)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">12</button>
+                        <button onclick="showCalendarNote(13)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">13</button>
+                        <button onclick="showCalendarNote(14)" class="relative p-1.5 bg-pink-500 text-cream-50 font-bold rounded-lg shadow-sm hover:scale-110 transition-transform">14<span class="absolute -top-1 -right-1 text-[9px]">❤️</span></button>
+                        <button onclick="showCalendarNote(15)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">15</button>
+                        <button onclick="showCalendarNote(16)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">16</button>
+                        <button onclick="showCalendarNote(17)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">17</button>
+                        <button onclick="showCalendarNote(18)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">18</button>
+                        <button onclick="showCalendarNote(19)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">19</button>
+                        <button onclick="showCalendarNote(20)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">20</button>
+                        <button onclick="showCalendarNote(21)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">21</button>
+                        <button onclick="showCalendarNote(22)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">22</button>
+                        <button onclick="showCalendarNote(23)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">23</button>
+                        <button onclick="showCalendarNote(24)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">24</button>
+                        <button onclick="showCalendarNote(25)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">25</button>
+                        <button onclick="showCalendarNote(26)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">26</button>
+                        <button onclick="showCalendarNote(27)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">27</button>
+                        <button onclick="showCalendarNote(28)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">28</button>
+                        <button onclick="showCalendarNote(29)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">29</button>
+                        <button onclick="showCalendarNote(30)" class="p-1.5 hover:bg-pink-100 rounded-lg text-maroon-800 font-medium">30</button>
+                    </div>
+                </div>
+
+                <div id="calendarNoteBox" role="status" aria-live="polite" class="calendar-note-panel bg-cream-100/80 rounded-2xl border border-pink-200 text-center text-sm text-maroon-900 font-medium shadow-inner">
+                    <h3 class="calendar-note-date">Your heart note</h3>
+                    <p class="calendar-note-description">Choose a calendar date to see its message here. ❤️</p>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Cake Section (Side View + Top View Switcher - Image 3 Style) -->
+        <section class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-6 md:p-8 shadow-xl text-center">
+                <div class="text-center max-w-lg mx-auto mb-6">
+                    <h2 class="font-serif text-3xl font-bold text-maroon-900">Birthday Cake Experience 🎂</h2>
+                    <p class="text-xs text-maroon-700/70 mt-1">Switch view, blow out candles, or slice the cake for Ayesha!</p>
+                    <div class="inline-flex bg-pink-100 p-1 rounded-full mt-4 border border-pink-200">
+                        <button id="btnSideView" onclick="switchCakeView('side')" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-600 text-cream-50 shadow-sm transition-all">
+                            Side View (Blow Candle)
+                        </button>
+                        <button id="btnTopView" onclick="switchCakeView('top')" class="px-4 py-1.5 rounded-full text-xs font-semibold text-pink-700 hover:text-maroon-900 transition-all">
+                            Top View (Slice Game)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cakeSideContainer" class="flex flex-col items-center justify-center py-6">
+                    <div class="cake-side-stage relative w-64 h-64 flex flex-col items-center justify-end mb-4">
+                        <div class="absolute top-8 flex justify-center gap-6 z-20">
+                            <div class="flex flex-col items-center"><div class="candle-flame flame-anim w-3 h-5 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-full"></div><div class="w-2.5 h-10 bg-gradient-to-r from-pink-300 to-rose-400 rounded-t-sm shadow-sm"></div></div>
+                            <div class="flex flex-col items-center"><div class="candle-flame flame-anim w-3 h-5 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-full"></div><div class="w-2.5 h-12 bg-gradient-to-r from-amber-200 to-yellow-400 rounded-t-sm shadow-sm"></div></div>
+                            <div class="flex flex-col items-center"><div class="candle-flame flame-anim w-3 h-5 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-full"></div><div class="w-2.5 h-10 bg-gradient-to-r from-pink-300 to-rose-400 rounded-t-sm shadow-sm"></div></div>
+                        </div>
+                        <div class="cake-side-top-tier w-40 h-16 bg-pink-300 rounded-t-2xl border-t-4 border-pink-200 relative flex items-center justify-center shadow-inner z-10">
+                            <span class="font-serif text-sm tracking-widest text-cream-50 font-bold drop-shadow"></span>
+                            <div class="absolute -bottom-2 w-full flex justify-around text-pink-100 text-xs"><span>★</span><span>♥</span><span>★</span><span>♥</span><span>★</span></div>
+                        </div>
+                        <div class="cake-side-bottom-tier w-56 h-20 bg-rose-400 rounded-t-2xl border-t-4 border-pink-300 relative flex items-center justify-center shadow-md">
+                            <div class="absolute top-2 w-full border-b-2 border-dashed border-pink-200 opacity-60"></div>
+                            <div class="flex gap-4 text-cream-50 text-xs"><span>✨</span><span>🎉</span><span>🎂</span><span>✨</span></div>
+                        </div>
+                        <div class="cake-side-plate w-64 h-4 bg-gray-200 rounded-full border-b-4 border-gray-300 shadow-lg"></div>
+                    </div>
+
+                    <button onclick="blowOutCandles()" class="bg-maroon-700 hover:bg-maroon-800 text-cream-50 px-6 py-2.5 rounded-full font-semibold shadow-md hover:shadow-lg transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-wind"></i> Tap to Blow Candles 🌬️
+                    </button>
+                </div>
+
+                <div id="cakeTopContainer" class="hidden flex flex-col items-center justify-center py-4">
+                    <p class="text-xs text-pink-700 mb-2 font-medium">Drag mouse or swipe across the cake to cut slices!</p>
+                    <div class="cake-canvas-frame relative rounded-full border-4 border-pink-200 shadow-lg overflow-hidden bg-pink-100">
+                        <canvas id="cakeCanvas" width="280" height="280" class="cursor-crosshair"></canvas>
+                    </div>
+                    <div class="mt-4 flex items-center gap-4 text-xs font-semibold text-maroon-800">
+                        <span id="sliceCounter" class="bg-cream-50 px-3 py-1.5 rounded-full border border-pink-200 shadow-sm">Slices Made: 0</span>
+                        <button onclick="resetCakeCanvas()" class="text-pink-600 hover:text-maroon-800 underline">Reset Cake</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="flowerSection" class="max-w-4xl mx-auto px-4 py-10 text-center">
+            <span class="text-maroon-600 text-xs font-semibold uppercase tracking-widest">Why You Are So Special</span>
+            <h2 class="font-serif text-3xl md:text-2xl text-maroon-900 mt-1 mb-2">
+                I could give you a hundred reasons, but some feelings are too beautiful for words. ❤️
+            </h2>
+            <p class="font-serif italic text-2x1 md:text-4x1 text-maroon-700 mb-8">
+                So, click around and discover a few of the countless reasons why you’ll always be special to me. 🌷✨
+            </p>
+
+            <!-- Emoticon Buttons Grid -->
+            <div class="flex items-center justify-center gap-4 md:gap-6 mb-8">
+                <button onclick="showReason(0)" id="emoBtn0" class="emo-btn active w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+                <button onclick="showReason(1)" id="emoBtn1" class="emo-btn w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+                <button onclick="showReason(2)" id="emoBtn2" class="emo-btn w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-regular fa-face-smile"></i>
+                </button>
+                <button onclick="showReason(3)" id="emoBtn3" class="emo-btn w-12 h-12 md:w-14 md:h-14 rounded-full bg-cream-50 border border-maroon-700/20 text-maroon-800 text-xl shadow-md flex items-center justify-center transition-all duration-300">
+                    <i class="fa-regular fa-star"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Reason Card Popup Box -->
+            <div class="max-w-md mx-auto mb-8 min-h-[130px] flex items-center justify-center">
+                <div id="reasonCard" class="w-full bg-cream-50/95 border border-maroon-700/20 rounded-2xl p-6 shadow-xl text-center transform transition-all duration-300">
+                    <h3 id="reasonTitle" class="font-script text-3xl text-maroon-900 flex items-center justify-center gap-2">
+                        ❤️ Your Warm Heart
+                    </h3>
+                    <p id="reasonDesc" class="font-handwriting text-2xl text-maroon-800 mt-2 leading-relaxed">
+You were never just someone I loved; you became a warmth in my heart that stayed through every distance, every mistake, and every difficult day—and a part of me will always be grateful for that love.                    </p>
+                </div>
+            </div>
+
+            <!-- Bouquet Image -->
+            <div class="relative max-w-sm mx-auto flex justify-center cursor-pointer" onclick="triggerHeartBurst(event)">
+                <div class="w-72 h-80 relative transform hover:scale-105 transition duration-500 flex items-center justify-center">
+                    <img src="./bouquet.png" alt="Colorful flower bouquet" class="w-full h-full object-contain drop-shadow-xl" />
+                </div>
+            </div>
+            <p class="text-[15px] font-sans uppercase tracking-widest text-maroon-700/90 mt-4">Tap bouquet for floating petals</p>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-4 py-2">
+            <div class="love-game-layout">
+            <div class="love-meter-panel bg-cream-50 border border-maroon-700/20 rounded-xl p-8 shadow-xl text-center relative flex flex-col items-center justify-center">
+                    <div class="flex items-center gap-2 text-maroon-600 text-xs font-semibold tracking-widest uppercase mb-1">
+                        <span class="text-maroon-500">✦</span> TINY EXPERIMENT <span class="text-maroon-500">✦</span>
+                    </div>
+                    <h3 class="font-serif text-3xl md:text-4xl text-maroon-900 mb-6">Let’s Measure the Magic</h3>
+
+                    <div class="love-meter-container shadow-inner my-2 flex items-end justify-center">
+                        <div id="loveMeterFill" class="love-meter-fill"></div>
+                        <div class="absolute bottom-3 w-4 h-4 bg-maroon-700 rounded-full border-2 border-cream-50 z-10"></div>
+                    </div>
+
+                    <div id="lovePercentage" class="font-serif text-4xl text-maroon-900 my-4 font-bold">
+                        20%
+                    </div>
+
+                    <p class="text-xs text-maroon-700/70 mb-6 font-sans">
+                        Press the button for a very scientific answer.
+                    </p>
+
+                    <button id="measureBtn" onclick="runLoveMeasurer()" class="w-full py-3.5 bg-maroon-700 hover:bg-maroon-800 active:scale-95 text-cream-50 font-semibold rounded-md shadow-md uppercase text-xs tracking-wider transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play text-xs"></i> Measure the love
+                    </button>
+                </div>
+
+                <section class="game-panel" aria-labelledby="gamePanelTitle">
+                    <div class="game-panel-heading">
+                        <h2 id="gamePanelTitle" class="font-serif text-2xl font-bold text-maroon-900">Play Game</h2>
+                    </div>
+                    <iframe
+                        id="birthdayGameFrame"
+                        src="game.html?embed=1"
+                        class="game-frame"
+                        title="Heart Tic-Tac-Toe game">
+                    </iframe>
+                </section>
+            </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-4 pt-2 pb-0">
+        </section>
+
+        <section id="letterSection" class="max-w-4xl mx-auto px-4 pt-2 pb-10">
+            <div class="bg-cream-50 border border-maroon-900/10 rounded-2xl p-6 md:p-12 shadow-xl relative overflow-hidden">
+                <div class="text-center mb-8">
+                    <span class="text-maroon-600 text-xs uppercase font-semibold tracking-widest">Secret Envelope</span>
+                    <h3 class="font-serif text-3xl md:text-5xl text-maroon-900 mt-1">Unseal Your Love Letter 💌</h3>
+                    <p class="text-xs md:text-sm text-maroon-700/70 mt-2 font-sans">Tap the wax seal to open the envelope and reveal my message.</p>
+                </div>
+
+                <div id="envelopeContainer" class="envelope-wrapper relative max-w-xl mx-auto mt-8 mb-12 cursor-pointer" onclick="toggleEnvelope()">
+                    <div class="envelope-flap absolute top-0 left-0 w-full h-36 bg-maroon-800 border-b border-maroon-900 shadow-md flex items-center justify-center">
+                        <div id="waxSeal" class="w-14 h-14 rounded-full bg-gradient-to-br from-gold-400 via-gold-500 to-gold-600 border-2 border-amber-200 shadow-lg flex items-center justify-center transform -translate-y-2 hover:scale-105 transition">
+                            <span class="font-script text-cream-50 text-2xl font-bold select-none">N</span>
+                        </div>
+                    </div>
+
+                    <div class="w-full h-72 bg-maroon-900 rounded-b-xl shadow-2xl relative overflow-hidden border border-maroon-900 flex flex-col justify-end p-6">
+                        <p class="text-cream-200/60 text-xs font-serif italic text-center z-10">Tap seal to unseal letter</p>
+                    </div>
+
+                    <div id="letterPaper" onclick="event.stopPropagation()" class="letter-paper absolute top-6 left-4 right-4 bg-cream-50 border border-maroon-700/20 p-6 md:p-8 rounded-lg shadow-xl opacity-0 transform translate-y-0">
+                        <div class="flex justify-between items-center border-b border-maroon-700/10 pb-3 mb-4">
+                            <span class="font-serif text-maroon-900 font-bold text-lg">My Dearest Ayesha,</span>
+                            <span class="text-xs text-maroon-700/60 font-semibold uppercase">17 Sep 2026</span>
+                        </div>
+                        
+                        <div id="typewriterBox" class="font-handwriting text-2xl md:text-2xl text-maroon-900 leading-relaxed min-h-[160px] whitespace-pre-line"></div>
+
+                        <div class="letter-signoff mt-6 pt-4 border-t border-maroon-700/10 flex justify-between items-center">
+                            <button onclick="event.stopPropagation(); restartTypewriter();" class="text-xs px-3 py-1 bg-maroon-100 text-maroon-800 rounded hover:bg-maroon-200 font-sans font-medium transition">
+                                <i class="fa-solid fa-rotate-right"></i> Re-read
+                            </button>
+                            <div class="letter-signature font-script text-3xl text-maroon-700">
+                                Forever yours, ❤️
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-4xl mx-auto px-4 py-8">
+            <div class="text-center mb-8">
+                <span class="text-maroon-600 text-xs uppercase font-semibold tracking-widest">Our Storybook</span>
+                <h3 class="font-serif text-3xl md:text-4xl text-maroon-900 mt-1">Moments We Spend Together 📝</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="tape-effect bg-cream-50 border border-maroon-700/20 rounded-xl p-6 shadow-lg relative transform -rotate-1 hover:rotate-0 transition">
+                    <div class="flex items-center justify-between border-b border-maroon-700/10 pb-2 mb-3">
+                        <span class="font-serif font-bold text-maroon-900 text-lg">Memory #1 ✨</span>
+                    </div>
+                    <p class="w-full bg-transparent font-handwriting text-2xl text-maroon-900 leading-relaxed">Haath pakadna, pehli baar haath par kiss karna, late-night endless talks, saath mein games khelna, silly jokes par hasna, aapka computer assignment karna… aur office khatam hone ke baad bhi sirf mujhe dekhne ghar ke paas aa jaana. ❤️ Un chhoti-chhoti cheezon mein hi mujhe realize hua ki hum kitne deeply connected the, aur aap mujhe kitna pyaar karte the. 🥹❤️</p>
+                </div>
+
+                <div class="tape-effect bg-cream-50 border border-maroon-700/20 rounded-xl p-6 shadow-lg relative transform rotate-1 hover:rotate-0 transition">
+                    <div class="flex items-center justify-between border-b border-maroon-700/10 pb-2 mb-3">
+                        <span class="font-serif font-bold text-maroon-900 text-lg">Memory #2 ☕</span>
+                    </div>
+                    <p class="w-full bg-transparent font-handwriting text-2xl text-maroon-900 leading-relaxed">Mujhe aaj bhi woh pal yaad hai jab maine aapke haathon se biryani khayi thi… ❤️ Aur aapke saath bitaya har ek moment — exercise, oats banana, saath hasna, dance karna, aur aapki godh mein sir rakh kar woh sukoon — sab mere dil ke bahut kareeb hai. Kuch memories bas yaad nahi rehti… woh dil mein hamesha zinda rehti hain. Aur aapke saath bitaya har pal mere liye wahi hai. ❤️</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="lastThingSection" class="max-w-md mx-auto px-4 py-10 text-center">
+            <h2 class="font-script text-5xl md:text-6xl text-maroon-800 flex items-center justify-center gap-3">
+                One Last Thing... 🎁
+            </h2>
+            <p class="font-sans text-xs md:text-sm text-maroon-700/70 mt-2 mb-8">
+                A tiny token of my love, just for you. Tap the gift to open it
+            </p>
+
+            <!-- 3D Pink Wrapped Gift Box -->
+            <div onclick="openFinalGift()" class="relative inline-block cursor-pointer group">
+                <div id="finalGiftBox" class="w-44 h-44 bg-pink-100 border-2 border-pink-300 rounded-2xl shadow-2xl flex items-center justify-center relative transform transition duration-300 hover:scale-105 animate-gift-shake">
+                    
+                    <!-- Gift Ribbon SVG -->
+                    <svg class="w-36 h-36 drop-shadow-md" viewBox="0 0 100 100">
+                        <rect x="10" y="35" width="80" height="55" rx="6" fill="#FF809B"/>
+                        <rect x="42" y="35" width="16" height="55" fill="#A82C48"/>
+                        <rect x="10" y="55" width="80" height="14" fill="#A82C48"/>
+                        <!-- Ribbon Bow Top -->
+                        <path d="M50,35 Q30,15 25,28 Q25,38 50,35 Z" fill="#A82C48"/>
+                        <path d="M50,35 Q70,15 75,28 Q75,38 50,35 Z" fill="#A82C48"/>
+                        <circle cx="50" cy="35" r="6" fill="#702236"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <section id="finalPage" class="hidden max-w-2xl mx-auto px-4 py-12 text-center">
+            <div class="bg-cream-50 border border-maroon-700/20 rounded-2xl p-8 md:p-12 shadow-2xl relative transform transition duration-700">
+                
+                <!-- Hugging Bears Sticker -->
+                <div class="w-40 h-40 mx-auto mb-10 relative bg-pink-100 rounded-xl border border-pink-200 flex items-center justify-center shadow-inner">
+                    <img src="./pngwing.png" alt="Hugging Bears Sticker" class="w-32 h-32 object-contain" />
+                </div>
+
+                <h2 class="font-script text-5xl md:text-7xl text-maroon-800 mb-2 flex items-center justify-center gap-2">
+                    Lots of love for you <span class="text-pink-500">💕</span>
+                </h2>
+
+                <p class="font-serif italic text-lg md:text-xl text-maroon-900 font-semibold mt-4">
+                    Once again, Happy Birthday, my love
+                </p>
+
+                <p class="font-handwriting text-2xl md:text-3xl text-maroon-800/90 mt-3 leading-relaxed">
+                    You mean everything to me, and I hope this little surprise made you smile.
+                </p>
+
+                <div class="mt-8 pt-6 border-t border-maroon-700/10">
+                    <button onclick="location.reload()" class="px-6 py-2.5 bg-maroon-700 hover:bg-maroon-800 text-cream-50 font-semibold rounded-lg text-xs uppercase tracking-widest shadow transition">
+                        Replay Surprise 🔁
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-center py-8 border-t border-maroon-700/10 text-xs text-maroon-800/60 font-sans tracking-wider uppercase">
+        Created with endless love for Ayesha, my love  ❤️
+    </footer>
+
+    <!-- Gift Modal -->
+    <div id="giftModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cream-50 max-w-md w-full rounded-2xl p-8 text-center relative border border-maroon-700/30 shadow-2xl">
+            <button onclick="closeGiftModal()" class="absolute top-4 right-4 text-maroon-700 hover:text-maroon-900 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalEmoji" class="text-6xl mb-3">💖</div>
+            <span class="text-xs font-semibold text-maroon-600 uppercase tracking-widest">Love Coupon Unlocked</span>
+            <h4 id="modalTitle" class="text-2xl font-serif font-bold text-maroon-900 mt-2">Unlimited Hugs</h4>
+            <p id="modalDesc" class="text-sm text-maroon-800/80 mt-3 leading-relaxed">Redeemable whenever you need a warm hug!</p>
+            <button onclick="closeGiftModal()" class="mt-6 w-full py-3 bg-maroon-700 hover:bg-maroon-800 text-cream-50 font-semibold rounded-lg shadow uppercase text-xs tracking-wider transition">
+                Claim Coupon ❤️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* 1. Canvas Floating Hearts Background */
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        let hearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class HeartParticle {
+            constructor() { this.reset(true); }
+            reset(initial = false) {
+                this.x = Math.random() * canvas.width;
+                this.y = initial ? Math.random() * canvas.height : canvas.height + 20;
+                this.size = Math.random() * 10 + 6;
+                this.speedY = Math.random() * 0.45 + 0.2;
+                this.opacity = Math.random() * 0.25 + 0.1;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < -20) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.fillStyle = `rgba(168, 44, 72, ${this.opacity})`;
+                ctx.beginPath();
+                const d = this.size;
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-d / 2, -d / 2, -d, d / 3, 0, d);
+                ctx.bezierCurveTo(d, d / 3, d / 2, -d / 2, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        for (let i = 0; i < 350; i++) hearts.push(new HeartParticle());
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(h => { h.update(); h.draw(); });
+            requestAnimationFrame(animateHearts);
+        }
+        animateHearts();
+
+        /* 2. Birthday Music */
+        const birthdayMusic = document.getElementById('birthdayMusic');
+        const musicIconCircle = document.getElementById('musicIconCircle');
+        const musicStatusText = document.getElementById('musicStatusText');
+
+        function setMusicPlayingState(isPlaying) {
+            musicIconCircle.classList.toggle('animate-spin', isPlaying);
+            musicStatusText.innerText = isPlaying ? 'Playing ♪' : 'Play Melody';
+        }
+
+        function requestBirthdayMusicPlayback() {
+            return birthdayMusic.play().then(() => {
+                setMusicPlayingState(true);
+                return true;
+            }).catch(() => {
+                musicStatusText.innerText = 'Click to play';
+                return false;
+            });
+        }
+
+        function toggleAudio() {
+            if (birthdayMusic.paused) {
+                requestBirthdayMusicPlayback();
+            } else {
+                birthdayMusic.pause();
+                setMusicPlayingState(false);
+            }
+        }
+
+        function startBirthdayMusicAfterInteraction(event) {
+            if (event.target instanceof Element && event.target.closest('#musicToggleBtn')) {
+                removeBirthdayMusicGestureListeners();
+                return;
+            }
+
+            if (!birthdayMusic.paused) {
+                removeBirthdayMusicGestureListeners();
+                return;
+            }
+
+            requestBirthdayMusicPlayback().then(isPlaying => {
+                if (isPlaying) removeBirthdayMusicGestureListeners();
+            });
+        }
+
+        function removeBirthdayMusicGestureListeners() {
+            document.removeEventListener('pointerdown', startBirthdayMusicAfterInteraction);
+            document.removeEventListener('keydown', startBirthdayMusicAfterInteraction);
+        }
+
+        document.addEventListener('pointerdown', startBirthdayMusicAfterInteraction);
+        document.addEventListener('keydown', startBirthdayMusicAfterInteraction);
+        requestBirthdayMusicPlayback();
+
+        birthdayMusic.addEventListener('pause', () => {
+            setMusicPlayingState(false);
+        });
+
+        /* 3. Reasons Emoticon Messages (Screenshot 2 & 3) */
+        const reasonsData = [
+            { title: "❤️ Your Warm Heart", desc: "You were never just someone I loved; you became a warmth in my heart that stayed through every distance, every mistake, and every difficult day—and a part of me will always be grateful for that love." },
+            { title: "✨ Your Magical Smile", desc: "Your smile has always had a little magic in it—it reaches somewhere deep in my heart, makes me genuinely happy, and even on my hardest days, just remembering your smile somehow makes everything feel a little easier. ✨❤️" },
+            { title: "😊 Our Shared Laughter", desc: "I still carry the memory of our laughter in my heart—because with you, even the simplest moments became precious memories that I would give anything to experience again." },
+            { title: "⭐ You Are My Star", desc: "There is a comfort in your presence that is difficult to explain—a feeling of peace that makes even simple moments feel special." }
+        ];
+
+        function showReason(idx) {
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`emoBtn${i}`);
+                if (i === idx) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+
+            const card = document.getElementById('reasonCard');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                document.getElementById('reasonTitle').innerText = reasonsData[idx].title;
+                document.getElementById('reasonDesc').innerText = reasonsData[idx].desc;
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200);
+        }
+
+        /* 4. Love Measurer Game Logic (Random 92-100%) */
+        let isMeasuring = false;
+        function runLoveMeasurer() {
+            if (isMeasuring) return;
+            isMeasuring = true;
+
+            const fillEl = document.getElementById('loveMeterFill');
+            const percentEl = document.getElementById('lovePercentage');
+            const finalScore = Math.floor(Math.random() * 9) + 92;
+
+            let currentScore = 0;
+            fillEl.style.height = '0%';
+            percentEl.innerText = '0%';
+
+            const interval = setInterval(() => {
+                currentScore += 2;
+                if (currentScore >= finalScore) {
+                    currentScore = finalScore;
+                    clearInterval(interval);
+                    isMeasuring = false;
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                }
+                fillEl.style.height = currentScore + '%';
+                percentEl.innerText = currentScore + '%';
+            }, 30);
+        }
+
+        /* 5. Calendar and Candle Cake Interactions */
+        let birthdayHeartTimer = null;
+
+        function showBirthdayHeart() {
+            const previousHeart = document.querySelector('.birthday-heart-reveal');
+            if (previousHeart) previousHeart.remove();
+            if (birthdayHeartTimer) clearTimeout(birthdayHeartTimer);
+
+            const heart = document.createElement('span');
+            heart.className = 'birthday-heart-reveal';
+            heart.setAttribute('aria-hidden', 'true');
+            heart.textContent = '♥';
+            document.body.appendChild(heart);
+
+            const removeHeart = () => {
+                heart.remove();
+                if (birthdayHeartTimer) clearTimeout(birthdayHeartTimer);
+                birthdayHeartTimer = null;
+            };
+
+            heart.addEventListener('animationend', removeHeart, { once: true });
+            birthdayHeartTimer = setTimeout(removeHeart, 2200);
+        }
+
+        function showCalendarNote(day) {
+            const box = document.getElementById('calendarNoteBox');
+            const specialNotes = {
+1: 'Some people make life beautiful just by existing. You are one of them. 💌',
+2: 'Your smile has a magic I cannot explain. ✨',
+3: 'Your happiness will always matter to me. ❤️',
+4: 'I am grateful that life introduced me to you. 🌷',
+5: 'You deserve happiness in every little moment. 💕',
+6: 'Even ordinary days feel special when I think of you. 👀',
+7: 'You are more precious than words can describe. ✨',
+8: 'This month has something special, and it is all about you. 💌',
+9: 'Five days until the world celebrates someone wonderful.❤️',
+10: 'I hope you know how special you are. 🎀',
+11: 'You deserve all the love this universe can offer. ✨',
+12: 'Two days closer to celebrating my favourite person. 💕',
+13: 'Tomorrow is your day, but you make every day beautiful.❤️',
+15: 'Never forget how special you are 💌',
+16: 'The celebration may be over, but my wishes for you never end. ✨',
+17: 'You make the world a little more beautiful. ❤️',
+18: 'If I could gift you one thing, it would be endless happiness. 💕',
+19: 'Some connections are simply priceless. ✨',
+20: 'You deserve to feel loved every single day. ❤️',
+21: 'Your presence is a beautiful gift. 💕',
+22: 'I hope your dreams find their way to you. ✨',
+23: 'Never underestimate how much you mean to someone. ❤️',
+24: 'You are a beautiful chapter in my life. 🎀',
+25: 'I wish I could turn every worry into a smile for you. 💌',
+26: 'The world is lucky to have you. ✨',
+27: 'Some people are unforgettable. You are one of them. ❤️',
+28: 'May life always be kind to your heart. 💕',
+29: 'Thank you for being the wonderful person you are. 🌷',
+30: 'November ends, but you will always remain special to me. ❤️',
+            };
+
+            let descriptionText;
+            if (day === 14) {
+                descriptionText = 'Happy Birthday Chanda !❤️🎂 The day my favourite person came into this world. I wish you endless smiles, beautiful memories, peaceful days, and all the happiness your heart can hold. Never forget how special you are. 👸✨';
+                showBirthdayHeart();
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            } else if (specialNotes[day]) {
+                descriptionText = specialNotes[day];
+            } else {
+                descriptionText = 'A sweet day made special because it belongs to your birthday month! 💕';
+            }
+
+            const dateHeading = document.createElement('h3');
+            dateHeading.className = 'calendar-note-date';
+            dateHeading.textContent = `November ${day}`;
+
+            const description = document.createElement('p');
+            description.className = 'calendar-note-description';
+            description.textContent = descriptionText;
+
+            box.replaceChildren(dateHeading, description);
+        }
+
+        function blowOutCandles() {
+            document.querySelectorAll('.candle-flame').forEach(flame => {
+                flame.style.display = 'none';
+            });
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        let cakeCanvas = null;
+        let cakeCtx = null;
+        let isDrawingSlice = false;
+        let slices = 0;
+        let cakeCanvasInitialized = false;
+
+        function switchCakeView(view) {
+            const sideContainer = document.getElementById('cakeSideContainer');
+            const topContainer = document.getElementById('cakeTopContainer');
+            const sideButton = document.getElementById('btnSideView');
+            const topButton = document.getElementById('btnTopView');
+
+            if (view === 'side') {
+                sideContainer.classList.remove('hidden');
+                topContainer.classList.add('hidden');
+                sideButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-600 text-cream-50 shadow-sm transition-all';
+                topButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold text-pink-700 hover:text-maroon-900 transition-all';
+                return;
+            }
+
+            sideContainer.classList.add('hidden');
+            topContainer.classList.remove('hidden');
+            topButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold bg-pink-600 text-cream-50 shadow-sm transition-all';
+            sideButton.className = 'px-4 py-1.5 rounded-full text-xs font-semibold text-pink-700 hover:text-maroon-900 transition-all';
+            initCakeCanvas();
+        }
+
+        function initCakeCanvas() {
+            cakeCanvas = document.getElementById('cakeCanvas');
+            cakeCtx = cakeCanvas.getContext('2d');
+            resetCakeCanvas();
+
+            if (cakeCanvasInitialized) return;
+            cakeCanvasInitialized = true;
+
+            cakeCanvas.addEventListener('mousedown', startSlice);
+            cakeCanvas.addEventListener('mousemove', drawSlice);
+            window.addEventListener('mouseup', endSlice);
+            cakeCanvas.addEventListener('touchstart', event => {
+                event.preventDefault();
+                startSlice(event.touches[0]);
+            }, { passive: false });
+            cakeCanvas.addEventListener('touchmove', event => {
+                event.preventDefault();
+                drawSlice(event.touches[0]);
+            }, { passive: false });
+            cakeCanvas.addEventListener('touchend', endSlice);
+        }
+
+        function getCakeCanvasPosition(event) {
+            const rect = cakeCanvas.getBoundingClientRect();
+            return {
+                x: (event.clientX - rect.left) * (cakeCanvas.width / rect.width),
+                y: (event.clientY - rect.top) * (cakeCanvas.height / rect.height)
+            };
+        }
+
+        function startSlice(event) {
+            isDrawingSlice = true;
+            const position = getCakeCanvasPosition(event);
+            cakeCtx.beginPath();
+            cakeCtx.moveTo(position.x, position.y);
+        }
+
+        function drawSlice(event) {
+            if (!isDrawingSlice) return;
+            const position = getCakeCanvasPosition(event);
+            cakeCtx.strokeStyle = '#BE185D';
+            cakeCtx.lineWidth = 3;
+            cakeCtx.lineCap = 'round';
+            cakeCtx.lineTo(position.x, position.y);
+            cakeCtx.stroke();
+            cakeCtx.beginPath();
+            cakeCtx.moveTo(position.x, position.y);
+        }
+
+        function endSlice() {
+            if (!isDrawingSlice) return;
+            isDrawingSlice = false;
+            slices++;
+            document.getElementById('sliceCounter').innerText = `Slices Made: ${slices}`;
+            confetti({ particleCount: 20, spread: 35, origin: { y: 0.6 } });
+        }
+
+        function resetCakeCanvas() {
+            if (!cakeCtx || !cakeCanvas) return;
+            slices = 0;
+            isDrawingSlice = false;
+            document.getElementById('sliceCounter').innerText = 'Slices Made: 0';
+            cakeCtx.clearRect(0, 0, cakeCanvas.width, cakeCanvas.height);
+
+            cakeCtx.beginPath();
+            cakeCtx.arc(140, 140, 120, 0, Math.PI * 2);
+            cakeCtx.fillStyle = '#F472B6';
+            cakeCtx.fill();
+
+            cakeCtx.beginPath();
+            cakeCtx.arc(140, 140, 80, 0, Math.PI * 2);
+            cakeCtx.fillStyle = '#FBCFE8';
+            cakeCtx.fill();
+
+            cakeCtx.fillStyle = '#831843';
+            cakeCtx.font = '16px Playfair Display, serif';
+            cakeCtx.textAlign = 'center';
+            cakeCtx.fillText('Cake', 140, 145);
+        }
+
+        /* 6. Envelope Letter Logic */
+        let envelopeIsOpen = false;
+        let typewriterIndex = 0;
+        let typewriterTimer = null;
+        const letterText = "Happy Birthday Ayesha!\nI don't need a thousand words to tell you what you mean to me.You became a beautiful part of my life through the simple things — your smile, our conversations, our laughter, and all those little moments that became memories I still hold close.I’m sorry for the moments when I failed to make you feel as loved as you deserved.But I hope, with time, my actions can show you that I never stopped caring.";
+
+        function toggleEnvelope() {
+            const env = document.getElementById('envelopeContainer');
+            const letter = document.getElementById('letterPaper');
+            envelopeIsOpen = !envelopeIsOpen;
+
+            if (envelopeIsOpen) {
+                env.classList.add('open');
+                setTimeout(() => {
+                    letter.classList.remove('opacity-0');
+                    startTypewriter();
+                }, 400);
+            } else {
+                env.classList.remove('open');
+                letter.classList.add('opacity-0');
+                resetTypewriter();
+            }
+        }
+
+        function startTypewriter() {
+            resetTypewriter();
+            typeWriter();
+        }
+
+        function typeWriter() {
+            const box = document.getElementById('typewriterBox');
+            if (typewriterIndex < letterText.length) {
+                box.innerText = letterText.substring(0, typewriterIndex + 1);
+                typewriterIndex++;
+                typewriterTimer = setTimeout(typeWriter, 35);
+            }
+        }
+
+        function resetTypewriter() {
+            if (typewriterTimer) clearTimeout(typewriterTimer);
+            typewriterIndex = 0;
+            document.getElementById('typewriterBox').innerText = "";
+        }
+
+        function restartTypewriter() {
+            startTypewriter();
+        }
+
+        /* 7. Leaflet Map */
+        let map = null, mapMarkers = [];
+        const journeyLocations = [
+            { title: "First Meeting", icon: "🧑‍🤝‍🧑", coords: [22.569223749859482, 88.35952181888912], desc: "Where it all began. Our first meeting, our first chapter." },
+            { title: "Second Meeting", icon: "🧑‍🤝‍🧑", coords: [22.573144767569172, 88.35727169884294], desc: "Answer that changed everything and brought us one step closer." },
+            { title: "First Date", icon: "🍽️", coords: [22.552182791649333, 88.35270991770008], desc: "Our first date at KFC — simple, sweet, and the beginning of so many beautiful memories together. ❤️🍗✨" },
+            { title: "Movie Date", icon: "🎬", coords: [22.565155981631868, 88.35906276527035], desc: "Our first movie date at HIND FAME — just you, me, and a beautiful memory that will always have a special place in our story. 🎬❤️", icon: "🎬" },
+            { title: "Birthday Date", icon: "🧁", coords: [22.59052412103017, 88.411957552925], desc: "Your first birthday date at SKY NOIR CAFE — just you, me, and our beautiful memory that will always have a special place in our story. 🧁❤️", icon: "🧁" },
+            { title: "Simple Date", icon: "🥤", coords: [22.574325509163025, 88.36447742038551], desc: "Paramount nearest meeting - simple meeting moments together ❤️🥤", icon: "🥤" },
+            { title: "Common Places", coords: [22.5331850849038, 88.34566947876141], desc: "Press to explore all the places we visited, enjoyed, and made beautiful memories together. ❤️", icon: "👫👩‍❤️‍👨" },
+        ];
+
+        const commonPlaces = [
+            { coords: [22.57465661840438, 88.36358815524132], desc: "College Square - Evening Walk 🌆👣" },
+            { coords: [22.57465661840438, 88.36358815524132], desc: "Food Station second nearest meeting 🍛👫" },
+            { coords: [22.525351077383494, 88.34449426060577], desc: "Jatin Das Park Walking 👫👩‍❤️‍👨" },
+            { coords: [22.575428341146598, 88.36300492690695], desc: "Calcutta University Back Gate - Meeting and Walking 👫👩‍❤️‍👨" },
+            { coords: [22.541985253325656, 88.34754832408697], desc: "We went to Haldiram Exide 🍛👫👩‍❤️‍👨" },
+            { coords: [22.583316496224676, 88.39111465003332], desc: "We went to Haldiram Manicktala 🍛👫👩‍❤️‍👨" },
+            { coords: [22.580088381877992, 88.39033466624811], desc: "VLCC - Manicktalla to Girish Park walking and auto 🛺👫👣" },
+            { coords: [22.55489134525058, 88.35052656456426], desc: "Park Street Zudio 🛍️👩‍❤️‍👨👫" },
+            { coords: [22.51659505382287, 88.34915952408589], desc: "Lake Mall to Kalighat walking 👫👩‍❤️‍👨👣" },
+            { coords: [22.586464534295484, 88.36381684737053], desc: "Mintella Cafe - Meeting Date 🍛👫👩‍❤️‍👨" },
+            { coords: [22.58344290905421, 88.36217937990916], desc: "Air Casa - Lunch Date Meeting 🍛👫👩‍❤️‍👨" },
+            { coords: [22.581516835200134, 88.37225652226658], desc: "From gym walks to eating waffles and coming home together in an auto 🛺👫👣" },
+            { coords: [22.582076017175314, 88.39121935864407], desc: "Kolkata Bazaar Shopping from Manicktala opposite to Haldiram. 🛍️👫👩‍❤️‍👨" },
+            { coords: [22.5331850849038, 88.34566947876141], desc: "In Netaji Bhavan Metro - Just spending time together making ordinary moments feel special. ❤️🚇" },            
+            { coords: [22.569622480138925, 88.43353897990856], desc: "OMG Cafe - Sitting and talking 👫🍛" },
+            { coords: [22.52125914929217, 88.34710142061822], desc: "A special birthday treat from you at Flora Café, filled with love, happiness, and memories that will always be ours. ❤️👫🍛" },
+
+        ];
+
+        let commonPlaceIndex = 1;
+
+        let selectedJourneyLocation = -1;
+
+        function renderJourneyCards() {
+            const container = document.getElementById('journeyLocationCards');
+            container.replaceChildren();
+
+            journeyLocations.forEach((location, index) => {
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'journey-location-card';
+                card.setAttribute('aria-pressed', String(index === selectedJourneyLocation));
+                card.addEventListener('click', event => {
+                    if (window.matchMedia('(max-width: 900px)').matches) event.currentTarget.blur();
+                    if (index === 6) showNextCommonPlace();
+                    else focusMapLocation(index);
+                });
+                const icon = document.createElement('span');
+                icon.className = 'journey-location-icon';
+                icon.setAttribute('aria-hidden', 'true');
+                icon.textContent = location.icon || '❤️';
+
+                const title = document.createElement('span');
+                title.className = 'journey-location-title';
+                title.textContent = location.title;
+
+                const description = document.createElement('span');
+                description.className = 'journey-location-description';
+                description.textContent = location.desc;
+
+                card.append(icon, title, description);
+                container.append(card);
+            });
+        }
+
+        function initMap() {
+            renderJourneyCards();
+            if (typeof L === 'undefined') return;
+
+            map = L.map('journeyMap').setView([22.5646, 88.3494], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 225 }).addTo(map);
+
+            journeyLocations.forEach((loc, index) => {
+                const heartIcon = L.divIcon({
+                    className: 'custom-heart-pin',
+                    html: `<span>${loc.icon || '❤️'}</span>`,
+                    iconSize: [32, 32], iconAnchor: [16, 16]
+                });
+                const marker = L.marker(loc.coords, { icon: heartIcon }).addTo(map);
+                const popupOptions = window.matchMedia('(max-width: 900px)').matches
+                    ? { maxWidth: Math.max(160, map.getSize().x - 64), autoPan: true, autoPanAnimation: false, autoPanPadding: [12, 12] }
+                    : {};
+                marker.bindPopup(`<b>${loc.title}</b><br>${loc.desc}`, popupOptions);
+                marker.on('click', () => {
+                    if (window.matchMedia('(max-width: 900px)').matches) focusMapLocation(index);
+                    else setJourneySelection(index);
+                });
+                mapMarkers.push(marker);
+            });
+        }
+
+        function setJourneySelection(idx) {
+            selectedJourneyLocation = idx;
+            document.querySelectorAll('.journey-location-card').forEach((card, index) => {
+                card.setAttribute('aria-pressed', String(index === idx));
+            });
+        }
+
+        function focusMapLocation(idx) {
+            if (!journeyLocations[idx]) return;
+            setJourneySelection(idx);
+            if (!map || !mapMarkers[idx]) {
+                scrollJourneySectionIntoView();
+                return;
+            }
+            moveMapToJourneyLocation(idx, 15, 1.5);
+            scrollJourneySectionIntoView();
+        }
+
+        function moveMapToJourneyLocation(idx, zoom, duration) {
+            const marker = mapMarkers[idx];
+            const coords = journeyLocations[idx].coords;
+
+            if (window.matchMedia('(max-width: 900px)').matches) {
+                map.stop();
+                mapMarkers.forEach(journeyMarker => journeyMarker.closePopup());
+                map.closePopup();
+                map.setView(coords, zoom, { animate: false });
+                return;
+            }
+
+            map.flyTo(coords, zoom, { duration });
+            marker.openPopup();
+        }
+
+        function scrollJourneySectionIntoView() {
+            if (!window.matchMedia('(max-width: 900px)').matches) return;
+            const mapFrame = document.querySelector('.journey-map-frame');
+            const behavior = document.visibilityState === 'visible' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'smooth'
+                : 'instant';
+            mapFrame.scrollIntoView({ behavior, block: 'start' });
+        }
+
+        function showNextCommonPlace() {
+            const place = commonPlaces[commonPlaceIndex];
+            const commonLocationIndex = 6;
+            const commonLocation = journeyLocations[commonLocationIndex];
+            commonLocation.coords = place.coords;
+            commonLocation.desc = place.desc;
+
+            setJourneySelection(commonLocationIndex);
+
+            const commonCard = document.querySelectorAll('.journey-location-card')[commonLocationIndex];
+            if (commonCard) {
+                commonCard.querySelector('.journey-location-description').textContent = place.desc;
+            }
+
+            if (map && mapMarkers[commonLocationIndex]) {
+                const marker = mapMarkers[commonLocationIndex];
+                marker.setLatLng(place.coords);
+                marker.setPopupContent(`<b>Common Places ☕❤️</b><br>${place.desc}`);
+                moveMapToJourneyLocation(commonLocationIndex, 16, 1.2);
+            }
+
+            scrollJourneySectionIntoView();
+            commonPlaceIndex = (commonPlaceIndex + 1) % commonPlaces.length;
+        }
+        window.addEventListener('load', initMap);
+
+        /* 8. Gift Coupons & Modal */
+        function openGift(id, title, desc, emoji) {
+            document.getElementById('modalEmoji').innerText = emoji;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('giftModal').classList.remove('hidden');
+            document.getElementById(`badge${id}`).innerText = 'Claimed ❤️';
+            document.getElementById(`badge${id}`).className = 'mt-3 text-[10px] px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-semibold uppercase';
+            confetti({ particleCount: 30, spread: 50 });
+        }
+
+        function closeGiftModal() {
+            document.getElementById('giftModal').classList.add('hidden');
+        }
+
+        /* 9. Final Surprise Gift Box Transition (Screenshot 4 & 5) */
+        function openFinalGift() {
+            confetti({
+                particleCount: 120,
+                spread: 100,
+                origin: { y: 0.5 },
+                colors: ['#FF4D73', '#A82C48', '#FFD700']
+            });
+
+            document.getElementById('lastThingSection').classList.add('hidden');
+            const finalPage = document.getElementById('finalPage');
+            finalPage.classList.remove('hidden');
+            finalPage.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function triggerHeartBurst(event) {
+            const originX = event ? event.clientX : window.innerWidth / 2;
+            const originY = event ? event.clientY : window.innerHeight / 2;
+            const petalColors = ['#FF809B', '#FF4D73', '#FFB3C3', '#F3C649'];
+
+            for (let i = 0; i < 18; i++) {
+                const petal = document.createElement('span');
+                petal.className = 'floating-petal';
+                petal.style.left = `${originX}px`;
+                petal.style.top = `${originY}px`;
+                petal.style.backgroundColor = petalColors[i % petalColors.length];
+                petal.style.setProperty('--petal-x', `${(Math.random() - 0.5) * 260}px`);
+                petal.style.setProperty('--petal-y', `${-80 - Math.random() * 220}px`);
+                petal.style.setProperty('--petal-rotation', `${(Math.random() - 0.5) * 720}deg`);
+                document.body.appendChild(petal);
+                petal.addEventListener('animationend', () => petal.remove());
+            }
+
+            confetti({ particleCount: 25, spread: 40, origin: { y: 0.6 } });
+        }
+    </script>
+</body>
+</html>
